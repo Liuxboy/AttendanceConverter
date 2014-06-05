@@ -141,24 +141,28 @@ public class AttendanceConverter {
             }
         }
 
+        //空出一行
+        rowCursor++;
+
         //工作日历设置
-        Row row1 = sheet.createRow(rowCursor+1);
-        Cell cellOfJobCalendarSetting = row0.createCell(3);
-        cellOfJobCalendarSetting.setCellValue("工作日历设置");
+        Row row1 = sheet.createRow(++rowCursor);
+        row1.createCell(3).setCellValue("工作日历设置");
+        row1.createCell(4).setCellValue(" ");
         //合并“工作日历设置”
         sheet.addMergedRegion(new CellRangeAddress(
-                rowCursor+2, //开始行(以0开始)
-                rowCursor+2, //结束行(以0开始)
+                rowCursor, //开始行(以0开始)
+                rowCursor, //结束行(以0开始)
                 3, //开始列(以0开始)
                 4  //结束列(以0开始)
         ));
+        //TODO:将该合并处居中
         //创建第二个表
-        Row row2 = sheet.createRow(rowCursor+3);
+        Row row2 = sheet.createRow(++rowCursor);
         row2.createCell(0).setCellValue("员工编码");
         row2.createCell(1).setCellValue("姓名");
         row2.createCell(2).setCellValue("部门");
 
-        Row row3 = sheet.createRow(rowCursor+4);
+        Row row3 = sheet.createRow(++rowCursor);
         row3.createCell(0).setCellValue(id);
         row3.createCell(1).setCellValue(name);
         row3.createCell(2).setCellValue("北京分中心销售室");
@@ -172,17 +176,17 @@ public class AttendanceConverter {
                 attendanceTime = attendanceTime(map.get(i+1));
                 starTime = attendanceTime2Int(attendanceTime[0]);
                 endTime = attendanceTime2Int(attendanceTime[1]);
-                if(starTime < 900 && endTime > 2100){   //全天班
+                if(starTime <= 900 && endTime >= 2100){   //全天班
                     row3.createCell(i+3).setCellValue("家乐福项目3");
-                }else if(starTime < 900 && endTime < 2100){
+                }else if(starTime <= 900 && endTime <= 2100){
                     row3.createCell(i+3).setCellValue("家乐福项目1");
-                }else if(starTime > 900 && endTime> 2100){
+                }else if(starTime >=900 && endTime >= 2100){
                     row3.createCell(i+3).setCellValue("家乐福项目2");
                 }
             }
         }
         //设置样式
-        setStyle(wb);
+        setStyle(wb,row1);
 
         //写入文件
         FileOutputStream fileOut = null;
@@ -201,7 +205,7 @@ public class AttendanceConverter {
      * 设置样式
      * @param workbook
      */
-    public static void setStyle(Workbook workbook){
+    public static void setStyle(Workbook workbook, Row rowNoBorder){
         CellStyle cellStyle = workbook.createCellStyle();
         cellStyle.setBorderBottom(CellStyle.BORDER_THIN);   //黑边框
         cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
@@ -212,9 +216,12 @@ public class AttendanceConverter {
         Sheet sheet = workbook.getSheetAt(0);
         for (Row row : sheet) {
             for (Cell cell : row) {
-                cell.setCellStyle(cellStyle);
+               if (!row.equals(rowNoBorder))
+                    cell.setCellStyle(cellStyle);
             }
         }
+
+       //TODO:怎么将表格尺寸放大，或自动放大尺寸
     }
 
     /**
@@ -268,8 +275,8 @@ public class AttendanceConverter {
     * @param args
     */
     public static void main(String[] args){
-        String detPath = "E:\\AttendanceConverter\\outputFile\\";
-        String srcPath = "E:\\AttendanceConverter\\inputFile\\01原始记录表-14年05月.xls";
+        String detPath = "E:\\AttendanceFile\\";
+        String srcPath = "E:\\AttendanceFile\\01原始记录表-14年05月.xls";
         InitAttendanceDataBean initAttendanceDataBean = getAttendanceData(srcPath);
         createNewExcel(0,initAttendanceDataBean,detPath);
     }
