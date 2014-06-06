@@ -100,9 +100,19 @@ public class AttendanceConverter {
 
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet();
+        sheet.setColumnWidth(0,3766);
+        for(int k = 0; k < map.size()+3; k++){
+            sheet.setColumnWidth(k,3800);
+        }
+        sheet.setColumnWidth(2,4700);
+
         CreationHelper creationHelper = wb.getCreationHelper();
         CellStyle cellStyleOfTime = wb.createCellStyle();
         cellStyleOfTime.setDataFormat(creationHelper.createDataFormat().getFormat("h:mm:ss"));
+
+        CellStyle styleOfBGC = wb.createCellStyle();
+        styleOfBGC.setFillForegroundColor(IndexedColors.RED.getIndex());
+        styleOfBGC.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         Row row0 = sheet.createRow(rowCursor);       //第一行写header
         row0.createCell(0).setCellValue("姓名");
@@ -110,6 +120,9 @@ public class AttendanceConverter {
         row0.createCell(2).setCellValue("标准日期");
         row0.createCell(3).setCellValue("标准打卡时间");
         row0.createCell(4).setCellValue("备注");
+        for (Cell cell0 : row0){
+            cell0.setCellStyle(styleOfBGC);
+        }
         Row row;
         Cell cell;
         String[] attendanceTime;
@@ -132,7 +145,7 @@ public class AttendanceConverter {
                     row.createCell(1).setCellValue(id);                     //工号
 
                     cell = row.createCell(2);
-                    cell.setCellValue(year +"/"+ month +"/"+ (i+1));            //标准日期
+                    cell.setCellValue(year +"/"+ month +"/"+ (i+1));        //标准日期
                     cell.setCellStyle(cellStyleOfTime);
 
                     row.createCell(3).setCellValue(attendanceTime[j]);      //标准打卡时间
@@ -146,29 +159,33 @@ public class AttendanceConverter {
 
         //工作日历设置
         Row row1 = sheet.createRow(++rowCursor);
-        row1.createCell(3).setCellValue("工作日历设置");
-        row1.createCell(4).setCellValue(" ");
+        row1.createCell(2).setCellValue("工作日历设置");
+        row1.createCell(3).setCellValue(" ");
         //合并“工作日历设置”
         sheet.addMergedRegion(new CellRangeAddress(
                 rowCursor, //开始行(以0开始)
                 rowCursor, //结束行(以0开始)
-                3, //开始列(以0开始)
-                4  //结束列(以0开始)
+                2, //开始列(以0开始)
+                3  //结束列(以0开始)
         ));
         //TODO:将该合并处居中
         //创建第二个表
+
         Row row2 = sheet.createRow(++rowCursor);
         row2.createCell(0).setCellValue("员工编码");
         row2.createCell(1).setCellValue("姓名");
         row2.createCell(2).setCellValue("部门");
-
+        for (Cell cell2 : row2){
+            cell2.setCellStyle(styleOfBGC);
+        }
         Row row3 = sheet.createRow(++rowCursor);
         row3.createCell(0).setCellValue(id);
         row3.createCell(1).setCellValue(name);
         row3.createCell(2).setCellValue("北京分中心销售室");
         int starTime,endTime;
+        Cell tempCell;
         for(int i = 0; i < map.size(); i++){
-            row2.createCell(i+3).setCellValue(i+1);
+            row2.createCell(i + 3).setCellValue(i + 1);
             time = map.get(i+1);
             if (time==null || time.equals("") || time.equals(" ")){
                 row3.createCell(i+3).setCellValue("公休");
@@ -191,7 +208,7 @@ public class AttendanceConverter {
         //写入文件
         FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream(filePath + name + month + "考勤记录.xlsx");
+            fileOut = new FileOutputStream(filePath + name + month + "月份考勤记录.xlsx");
             wb.write(fileOut);
             fileOut.close();
         } catch (FileNotFoundException e) {
@@ -216,8 +233,9 @@ public class AttendanceConverter {
         Sheet sheet = workbook.getSheetAt(0);
         for (Row row : sheet) {
             for (Cell cell : row) {
-               if (!row.equals(rowNoBorder))
-                    cell.setCellStyle(cellStyle);
+               if (!row.equals(rowNoBorder)){
+                   cell.setCellStyle(cellStyle);
+               }
             }
         }
 
