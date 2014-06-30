@@ -264,7 +264,7 @@ public class AttendanceConverter {
      */
     public static String[] getInfo(String str){
         if(str!=null){
-            return str.split("(:| )+");
+            return str.split("(:|\\s)+");
         }else {
             return null;
         }
@@ -294,7 +294,7 @@ public class AttendanceConverter {
     */
     public static void main(String[] args){
         String detPath = "E:\\AttendanceFile\\";
-        String srcPath = "E:\\AttendanceFile\\01原始记录表-14年05月.xls";
+        String srcPath = "E:\\AttendanceFile\\01原始记录表-14年06月.xls";
         InitAttendanceDataBean initAttendanceDataBean = getAttendanceData(srcPath);
         createNewExcel(0,initAttendanceDataBean,detPath);
     }
