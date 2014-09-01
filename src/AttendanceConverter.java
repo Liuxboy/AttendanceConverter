@@ -74,7 +74,7 @@ public class AttendanceConverter {
                 info = getInfo(cell1.getStringCellValue());
 
                 Cell cell;
-                for(int i = 0; i < row2.getLastCellNum(); i++){ //遍历第二行与第三行Cell，将日期与考勤时间塞进一个HashMap中
+                for(int i = 0; i <row2.getLastCellNum(); i++){ //遍历第二行与第三行Cell，将日期与考勤时间塞进一个HashMap中
                     cell = row3.getCell(i);
                     map.put(i+1,cell.getStringCellValue());
                 }
@@ -294,9 +294,11 @@ public class AttendanceConverter {
     */
     public static void main(String[] args){
         String detPath = "E:\\AttendanceFile\\";
-        String srcPath = "E:\\AttendanceFile\\01原始记录表-14年06月.xls";
-        InitAttendanceDataBean initAttendanceDataBean = getAttendanceData(srcPath);
-        createNewExcel(0,initAttendanceDataBean,detPath);
+        for(int i = 1; i < 4; i++){
+            String srcPath = "E:\\AttendanceFile\\01原始记录表-14年08月" + i + ".xlsx";
+            InitAttendanceDataBean initAttendanceDataBean = getAttendanceData(srcPath);
+            createNewExcel(0,initAttendanceDataBean,detPath);
+        }
     }
 }
 
