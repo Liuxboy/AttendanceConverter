@@ -98,7 +98,7 @@ public class AttendanceConverter {
     public static void createNewExcel(int rowCursor, InitAttendanceDataBean initAttendanceDataBean, String filePath){
         Map<Integer,String> map = initAttendanceDataBean.getAttendanceMap();
 
-        Workbook wb = new XSSFWorkbook();
+        Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
         sheet.setColumnWidth(0,3766);
         for(int k = 0; k < map.size()+3; k++){
@@ -208,7 +208,7 @@ public class AttendanceConverter {
         //写入文件
         FileOutputStream fileOut = null;
         try {
-            fileOut = new FileOutputStream(filePath + name + month + "月份考勤记录.xlsx");
+            fileOut = new FileOutputStream(filePath + name + month + "月份考勤记录.xls");
             wb.write(fileOut);
             fileOut.close();
         } catch (FileNotFoundException e) {
@@ -295,7 +295,7 @@ public class AttendanceConverter {
     public static void main(String[] args){
         String detPath = "E:\\AttendanceFile\\";
         for(int i = 1; i < 4; i++){
-            String srcPath = "E:\\AttendanceFile\\01原始记录表-14年08月" + i + ".xlsx";
+            String srcPath = "E:\\AttendanceFile\\01原始记录表-14年08月" + i + ".xls";
             InitAttendanceDataBean initAttendanceDataBean = getAttendanceData(srcPath);
             createNewExcel(0,initAttendanceDataBean,detPath);
         }
